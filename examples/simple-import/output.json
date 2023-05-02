@@ -1,0 +1,98 @@
+{
+  "results": [
+    {
+      "prompt": {
+        "raw": "Rephrase this in French: Hello world",
+        "display": "Rephrase this in French: {{body}}"
+      },
+      "vars": {
+        "body": "Hello world"
+      },
+      "response": {
+        "output": "Bonjour le monde",
+        "tokenUsage": {
+          "total": 19,
+          "prompt": 16,
+          "completion": 3
+        }
+      }
+    },
+    {
+      "prompt": {
+        "raw": "Rephrase this in French: I&#39;m hungry",
+        "display": "Rephrase this in French: {{body}}"
+      },
+      "vars": {
+        "body": "I'm hungry"
+      },
+      "response": {
+        "output": "J'ai faim.",
+        "tokenUsage": {
+          "total": 24,
+          "prompt": 19,
+          "completion": 5
+        }
+      }
+    },
+    {
+      "prompt": {
+        "raw": "Rephrase this like a pirate: Hello world",
+        "display": "Rephrase this like a pirate: {{body}}"
+      },
+      "vars": {
+        "body": "Hello world"
+      },
+      "response": {
+        "output": "Ahoy thar, me hearties! Avast ye, world!",
+        "tokenUsage": {
+          "total": 32,
+          "prompt": 17,
+          "completion": 15
+        }
+      }
+    },
+    {
+      "prompt": {
+        "raw": "Rephrase this like a pirate: I&#39;m hungry",
+        "display": "Rephrase this like a pirate: {{body}}"
+      },
+      "vars": {
+        "body": "I'm hungry"
+      },
+      "response": {
+        "output": "Arrr, me belly be empty and me throat be parched! I be needin' some grub, matey!",
+        "tokenUsage": {
+          "total": 45,
+          "prompt": 20,
+          "completion": 25
+        }
+      }
+    }
+  ],
+  "stats": {
+    "successes": 4,
+    "failures": 0,
+    "tokenUsage": {
+      "total": 120,
+      "prompt": 72,
+      "completion": 48
+    }
+  },
+  "table": [
+    [
+      "Rephrase this in French: {{body}}",
+      "Rephrase this like a pirate: {{body}}",
+      "body"
+    ],
+    [
+      "Bonjour le monde",
+      "Ahoy thar, me hearties! Avast ye, world!",
+      "Hello world"
+    ],
+    [
+      "J'ai faim.",
+      "Arrr, me belly be empty and me throat be parched! I be needin' some grub, matey!",
+      "I'm hungry"
+    ]
+  ]
+}
