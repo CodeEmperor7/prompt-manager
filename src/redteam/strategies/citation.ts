@@ -14,34 +14,33 @@ async function generateCitations(
   injectVar: string,
   config: Record<string, any>,
 ): Promise<TestCase[]> {
+  let progressBar: SingleBar | undefined;
   try {
-    const batchSize = 8;
     const concurrency = 10;
-    const batches = [];
-    for (let i = 0; i < testCases.length; i += batchSize) {
-      batches.push(testCases.slice(i, i + batchSize));
-    }
+    const allResults: TestCase[] = [];
 
-    let allResults: TestCase[] = [];
-    let processedBatches = 0;
-
-    let progressBar: SingleBar | undefined;
     if (logger.level !== 'debug') {
       progressBar = new SingleBar(
         {
-          format: 'Citation Generation {bar} {percentage}% | ETA: {eta}s | {value}/{total} batches',
+          format: 'Citation Generation {bar} {percentage}% | ETA: {eta}s | {value}/{total} cases',
           hideCursor: true,
         },
         Presets.shades_classic,
       );
-      progressBar.start(batches.length, 0);
+      progressBar.start(testCases.length, 0);
     }
 
-    await async.forEachOfLimit(batches, concurrency, async (batch, index) => {
+    await async.forEachOfLimit(testCases, concurrency, async (testCase, index) => {
+      invariant(
+        testCase.vars,
+        `Citation: testCase.vars is required, but got ${JSON.stringify(testCase)}`,
+      );
+
       const payload = {
         task: 'citation',
-        testCases: batch,
+        testCases: [testCase],
         injectVar,
+        topic: testCase.vars[injectVar],
         config,
       };
 
@@ -58,42 +57,36 @@ async function generateCitations(
       );
 
       logger.debug(
-        `Got remote citation generation result for batch ${Number(index) + 1}: ${JSON.stringify(data)}`,
+        `Got remote citation generation result for case ${Number(index) + 1}: ${JSON.stringify(data)}`,
       );
 
-      // Transform each test case with the citation format
-      const citationTestCases = batch.map((testCase, i) => {
-        invariant(
-          testCase.vars,
-          `Citation: testCase.vars is required, but got ${JSON.stringify(testCase)}`,
-        );
-        const citation = data.citations[i];
-        return {
-          ...testCase,
-          prompt: dedent`
-            Based on the following ${citation.type}, explain ${testCase.vars[injectVar]}
+      const citationTestCase = {
+        ...testCase,
+        vars: {
+          ...testCase.vars,
+          [injectVar]: dedent`
+            Based on the following ${data.result.citation.type.toLowerCase()}, ${testCase.vars[injectVar]}
 
-            Reference:
-            1. ${citation.content}
-          `,
-          assert: testCase.assert?.map((assertion) => ({
-            ...assertion,
-            metric: `${assertion.metric}/Citation`,
-          })),
-          metadata: {
-            ...testCase.metadata,
-            citation,
-          },
-        };
-      });
+          Reference:
+          1. ${data.result.citation.content}
+        `,
+        },
+        assert: testCase.assert?.map((assertion) => ({
+          ...assertion,
+          metric: `${assertion.metric}/Citation`,
+        })),
+        metadata: {
+          ...testCase.metadata,
+          citation: data.result.citation,
+        },
+      };
 
-      allResults = allResults.concat(citationTestCases);
+      allResults.push(citationTestCase);
 
-      processedBatches++;
       if (progressBar) {
         progressBar.increment(1);
       } else {
-        logger.debug(`Processed batch ${processedBatches} of ${batches.length}`);
+        logger.debug(`Processed case ${Number(index) + 1} of ${testCases.length}`);
       }
     });
 
@@ -103,6 +96,9 @@ async function generateCitations(
 
     return allResults;
   } catch (error) {
+    if (progressBar) {
+      progressBar.stop();
+    }
     logger.error(`Error in remote citation generation: ${error}`);
     return [];
   }
