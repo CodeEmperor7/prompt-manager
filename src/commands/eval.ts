@@ -25,11 +25,8 @@ import { EMAIL_OK_STATUS } from '../types/email';
 import { CommandLineOptionsSchema, OutputFileExtension, TestSuiteSchema } from '../types/index';
 import { isApiProvider } from '../types/providers';
 import { checkCloudPermissions, getOrgContext } from '../util/cloud';
-import {
-  clearConfigCache,
-  DEFAULT_CONFIG_EXTENSIONS,
-  loadDefaultConfig,
-} from '../util/config/default';
+import { clearConfigCache, loadDefaultConfig } from '../util/config/default';
+import { DEFAULT_CONFIG_EXTENSIONS } from '../util/config/extensions';
 import { resolveConfigs } from '../util/config/load';
 import { maybeLoadFromExternalFile } from '../util/file';
 import { printBorder, setupEnv, writeMultipleOutputs } from '../util/index';

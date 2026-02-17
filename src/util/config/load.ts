@@ -46,6 +46,7 @@ import { promptfooCommand } from '../promptfooCommand';
 import { readTest, readTests } from '../testCaseReader';
 import { validateTestPromptReferences } from '../validateTestPromptReferences';
 import { validateTestProviderReferences } from '../validateTestProviderReferences';
+import { DEFAULT_CONFIG_EXTENSIONS } from './extensions';
 
 /**
  * Type guard to check if a test case has vars property
@@ -711,8 +712,11 @@ export async function resolveConfigs(
   const hasConfigFile = Boolean(configPaths);
 
   if (!hasConfigFile && !hasPrompts && !hasProviders && !isCI()) {
+    const extList = DEFAULT_CONFIG_EXTENSIONS.join(', ');
     logger.warn(dedent`
       ${chalk.yellow.bold('⚠️  No promptfooconfig found')}
+
+      ${chalk.white(`Searched in ${chalk.bold(process.cwd())} for promptfooconfig.{${extList}}`)}
 
       ${chalk.white('Try running with:')}
 
