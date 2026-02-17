@@ -129,9 +129,7 @@ export async function doEval(
             defaultConfig = { ...defaultConfig, ...dirConfig };
           } else {
             logger.warn(
-              `No configuration file found in directory: ${configPath}. Looked for promptfooconfig.{${DEFAULT_CONFIG_EXTENSIONS.join(
-                ',',
-              )}}`,
+              `No configuration file found in directory: ${configPath}. Looked for promptfooconfig.{${DEFAULT_CONFIG_EXTENSIONS.join(',')}}. Run "${promptfooCommand('init')}" or pass --config path/to/promptfooconfig.yaml.`,
             );
           }
         }

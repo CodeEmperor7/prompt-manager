@@ -379,7 +379,7 @@ export async function combineConfigs(configPaths: string[]): Promise<UnifiedConf
 
     if (globPaths.length === 0) {
       throw new Error(
-        `No configuration file found at ${configPath}. Run "promptfoo init" to create one or pass --config path/to/promptfooconfig.yaml.`,
+        `No configuration file found at ${configPath}. Run "${promptfooCommand('init')}" to create one or pass --config path/to/promptfooconfig.yaml.`,
       );
     }
     for (const globPath of globPaths) {
