@@ -25,6 +25,7 @@ import {
   StrategyConfigSchema,
 } from '../../redteam/types';
 import { TestCaseWithPlugin } from '../../types';
+import { RedteamSchemas } from '../../types/api/redteam';
 import { fetchWithProxy } from '../../util/fetch/index';
 import {
   extractGeneratedPrompt,
@@ -260,6 +261,12 @@ let currentJobId: string | null = null;
 let currentAbortController: AbortController | null = null;
 
 redteamRouter.post('/run', async (req: Request, res: Response): Promise<void> => {
+  const bodyResult = RedteamSchemas.Run.Request.safeParse(req.body);
+  if (!bodyResult.success) {
+    res.status(400).json({ success: false, error: z.prettifyError(bodyResult.error) });
+    return;
+  }
+
   // If there's a current job running, abort it
   if (currentJobId) {
     if (currentAbortController) {
@@ -272,7 +279,7 @@ redteamRouter.post('/run', async (req: Request, res: Response): Promise<void> =>
     }
   }
 
-  const { config, force, verbose, delay, maxConcurrency } = req.body;
+  const { config, force, verbose, delay, maxConcurrency } = bodyResult.data;
   const id = crypto.randomUUID();
   currentJobId = id;
   currentAbortController = new AbortController();
@@ -290,16 +297,13 @@ redteamRouter.post('/run', async (req: Request, res: Response): Promise<void> =>
   // Set web UI mode
   cliState.webUI = true;
 
-  // Validate and normalize maxConcurrency
-  const normalizedMaxConcurrency = Math.max(1, Number(maxConcurrency || '1'));
-
   // Run redteam in background
   doRedteamRun({
     liveRedteamConfig: config,
     force,
     verbose,
-    delay: Number(delay || '0'),
-    maxConcurrency: normalizedMaxConcurrency,
+    delay: delay ?? 0,
+    maxConcurrency: maxConcurrency ?? 1,
     logCallback: (message: string) => {
       if (currentJobId === id) {
         const job = evalJobs.get(id);
@@ -384,7 +388,18 @@ redteamRouter.post('/cancel', async (_req: Request, res: Response): Promise<void
  * Cloud's task registry (See server/src/routes/task.ts).
  */
 redteamRouter.post('/:taskId', async (req: Request, res: Response): Promise<void> => {
-  const { taskId } = req.params;
+  const paramsResult = RedteamSchemas.Task.Params.safeParse(req.params);
+  if (!paramsResult.success) {
+    res.status(400).json({ success: false, error: z.prettifyError(paramsResult.error) });
+    return;
+  }
+  const bodyResult = RedteamSchemas.Task.Request.safeParse(req.body);
+  if (!bodyResult.success) {
+    res.status(400).json({ success: false, error: z.prettifyError(bodyResult.error) });
+    return;
+  }
+
+  const { taskId } = paramsResult.data;
   const cloudFunctionUrl = getRemoteGenerationUrl();
   logger.debug(
     `Received ${taskId} task request: ${JSON.stringify({
@@ -402,8 +417,8 @@ redteamRouter.post('/:taskId', async (req: Request, res: Response): Promise<void
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        ...bodyResult.data,
         task: taskId,
-        ...req.body,
       }),
     });
 
