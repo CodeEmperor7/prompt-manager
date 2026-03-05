@@ -190,7 +190,7 @@ providers:
 
 ```yaml
 providers:
-  - python:./provider.py
+  - file://provider.py
 ```
 
 ```python
@@ -283,13 +283,15 @@ providers:
 
 ### Transform output before assertions
 
-When models wrap JSON in markdown fences or add extra text:
+When models wrap JSON in markdown fences or add extra text, use
+`options.transform` to clean the output before assertions run:
 
 ````yaml
 - description: 'Parses JSON from markdown output'
   vars:
     input: 'Give me a JSON object'
-  transform: "output.replace(/```json\\n?|```/g, '').trim()"
+  options:
+    transform: "output.replace(/```json\\n?|```/g, '').trim()"
   assert:
     - type: is-json
 ````

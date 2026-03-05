@@ -57,7 +57,7 @@ Pick the simplest option that matches the real system:
 | ---------------- | --------------------------------------------------------------------- |
 | Compare models   | `openai:chat:gpt-4.1-mini`, `anthropic:messages:claude-sonnet-4-6`    |
 | Test an HTTP API | `id: https` with `config.url`, `config.body`, and `transformResponse` |
-| Test local code  | `python:./provider.py` or `file://provider.js`                        |
+| Test local code  | `file://provider.py` or `file://provider.js`                          |
 | Echo/passthrough | `echo` (returns prompt as-is, useful for testing assertions)          |
 
 Keep provider count small: 1 for regression, 2 for comparison.
@@ -150,11 +150,12 @@ assert:
 ```
 
 **Transform pattern** (preprocess output before assertions):
-When models wrap JSON in markdown fences or add preamble text, use `transform`
-on the test or provider to clean it before assertions run:
+When models wrap JSON in markdown fences or add preamble text, use
+`options.transform` on the test to clean output before assertions run:
 
 ````yaml
-transform: "output.replace(/```json\\n?|```/g, '').trim()"
+options:
+  transform: "output.replace(/```json\\n?|```/g, '').trim()"
 ````
 
 Use `defaultTest` for assertions shared across all tests (cost limits, format
