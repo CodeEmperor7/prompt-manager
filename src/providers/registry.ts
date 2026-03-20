@@ -1197,6 +1197,14 @@ export const providerMap: ProviderFactory[] = [
     ) => {
       const splits = providerPath.split(':');
       const firstPart = splits[1];
+      if (firstPart === 'video') {
+        const modelName = splits.slice(2).join(':');
+        return new GoogleVideoProvider(modelName, {
+          ...providerOptions,
+          id: providerPath,
+          config: { ...providerOptions.config, vertexai: true },
+        });
+      }
       if (firstPart === 'chat') {
         return new VertexChatProvider(splits.slice(2).join(':'), providerOptions);
       }
@@ -1330,7 +1338,10 @@ export const providerMap: ProviderFactory[] = [
           return new GoogleImageProvider(modelName, providerOptions);
         } else if (serviceType === 'video') {
           // This is a Veo video generation request
-          return new GoogleVideoProvider(modelName, providerOptions);
+          return new GoogleVideoProvider(modelName, {
+            ...providerOptions,
+            id: providerPath,
+          });
         }
       }
 
