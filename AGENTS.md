@@ -47,7 +47,8 @@ npm run f                  # Format only changed files
 npm run test:watch         # Run tests in watch mode
 npm run test:integration   # Run integration tests
 npm run test:redteam:integration  # Run red team integration tests
-npx vitest path/to/test    # Run a specific test file
+npm run test:app -- -- src/pages/path/to/test.test.tsx --run  # Run a specific frontend test file from repo root
+npx vitest path/to/test    # Run a specific backend test file
 
 # Development
 npm run dev                # Start both server and app
@@ -251,7 +252,7 @@ See `test/AGENTS.md` for testing patterns.
 ## Project Conventions
 
 - **ESM modules** (type: "module" in package.json)
-- **Node.js ^20.20.0 || >=22.22.0** - Run `nvm use` to align with `.nvmrc` before tests or review checks; if native modules still mismatch, rebuild them with `npm rebuild better-sqlite3`. `.npmrc` sets `engine-strict=true`
+- **Node.js ^20.20.0 || >=22.22.0** - Before `npm`/`vite`/`vitest`, run `source ~/.nvm/nvm.sh && nvm use` so `node -v` matches `.nvmrc`; if native modules still mismatch before tests or review checks, run `npm rebuild better-sqlite3`. `.npmrc` sets `engine-strict=true`
 - **Alternative package managers** (pnpm, yarn) are supported
 - **File structure:** core logic in `src/`, tests in `test/`
 - **Examples** belong in `examples/` with clear README.md
