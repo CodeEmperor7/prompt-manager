@@ -1623,7 +1623,12 @@ class Evaluator {
     // Actually run the eval
     let numComplete = 0;
 
-    const processEvalStep = async (evalStep: RunEvalOptions, index: number | string) => {
+    const processEvalStep = async (
+      evalStep: RunEvalOptions,
+      index: number | string,
+      shouldSkipStaleRows?: () => boolean,
+      onRowsReady?: () => void,
+    ) => {
       if (typeof index !== 'number') {
         throw new Error('Expected index to be a number');
       }
@@ -1634,8 +1639,15 @@ class Evaluator {
       evalStep.test = beforeEachOut.test;
 
       const rows = await runEval(evalStep);
+      onRowsReady?.();
 
       for (const row of rows) {
+        if (shouldSkipStaleRows?.()) {
+          // Timed-out provider calls can still settle later; ignore stale rows
+          // so the timeout row remains the canonical result for this test case.
+          return;
+        }
+
         for (const varName of Object.keys(row.vars)) {
           vars.add(varName);
         }
@@ -1816,24 +1828,21 @@ class Evaluator {
 
       let timeoutId: NodeJS.Timeout | undefined;
       let didTimeout = false;
+      const clearEvalStepTimeout = () => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = undefined;
+        }
+      };
 
       try {
         return await Promise.race([
-          processEvalStep(evalStepWithSignal, index),
+          processEvalStep(evalStepWithSignal, index, () => didTimeout, clearEvalStepTimeout),
           new Promise<void>((_, reject) => {
             timeoutId = setTimeout(() => {
               didTimeout = true;
               // Abort any ongoing requests
               abortController.abort();
-
-              // If the provider has a cleanup method, call it
-              if (typeof evalStep.provider.cleanup === 'function') {
-                try {
-                  void evalStep.provider.cleanup();
-                } catch (cleanupErr) {
-                  logger.warn(`Error during provider cleanup: ${cleanupErr}`);
-                }
-              }
 
               reject(new Error(`Evaluation timed out after ${timeoutMs}ms`));
             }, timeoutMs);
@@ -1916,9 +1925,7 @@ class Evaluator {
           );
         }
       } finally {
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-        }
+        clearEvalStepTimeout();
       }
     };
 
