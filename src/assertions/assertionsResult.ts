@@ -18,6 +18,31 @@ interface ParentAssertionSet {
   assertionSet: AssertionSet;
 }
 
+function buildAssertionSetMetadata(assertionSet: AssertionSet) {
+  return {
+    type: assertionSet.type,
+    assertionCount: assertionSet.assert.length,
+    ...(assertionSet.metric !== undefined && { metric: assertionSet.metric }),
+    ...(assertionSet.threshold !== undefined && { threshold: assertionSet.threshold }),
+    ...(assertionSet.weight !== undefined && { weight: assertionSet.weight }),
+  };
+}
+
+function mergeMetadata(
+  baseMetadata: GradingResult['metadata'],
+  incomingMetadata: GradingResult['metadata'],
+): GradingResult['metadata'] | undefined {
+  if (!baseMetadata && !incomingMetadata) {
+    return undefined;
+  }
+
+  return {
+    ...incomingMetadata,
+    ...baseMetadata,
+    ...(baseMetadata?.assertionSet && { assertionSet: baseMetadata.assertionSet }),
+  };
+}
+
 export class AssertionsResult {
   static noAssertsResult(): GradingResult {
     return {
@@ -169,6 +194,11 @@ export class AssertionsResult {
       ...(hasNamedScoreWeights ? { namedScoreWeights: this.namedScoreWeights } : {}),
       tokensUsed: this.tokensUsed,
       componentResults: flattenedComponentResults,
+      ...(this._parentAssertionSet && {
+        metadata: {
+          assertionSet: buildAssertionSetMetadata(this._parentAssertionSet.assertionSet),
+        },
+      }),
     };
 
     if (scoringFunction) {
@@ -185,6 +215,9 @@ export class AssertionsResult {
         this.result = {
           ...this.result,
           ...scoringResult,
+          ...((this.result.metadata || scoringResult.metadata) && {
+            metadata: mergeMetadata(this.result.metadata, scoringResult.metadata),
+          }),
         };
       } catch (err) {
         this.result.pass = false;
