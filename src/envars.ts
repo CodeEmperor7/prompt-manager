@@ -242,6 +242,9 @@ type EnvVars = {
   ANTHROPIC_STOP?: string;
   ANTHROPIC_TEMPERATURE?: number;
 
+  // Atlas Cloud
+  ATLASCLOUD_API_KEY?: string;
+
   // AWS Bedrock
   AWS_BEARER_TOKEN_BEDROCK?: string;
   AWS_BEDROCK_FREQUENCY_PENALTY?: string;
