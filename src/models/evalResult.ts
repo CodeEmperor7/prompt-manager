@@ -29,6 +29,29 @@ function sanitizeProviderConfig(config: ProviderConfig): ProviderConfig {
   }) as ProviderConfig;
 }
 
+function projectProviderResponse(
+  response: ProviderResponse | undefined,
+  options: { stripMetadata: boolean; stripOutput: boolean },
+): ProviderResponse | undefined {
+  if (!response) {
+    return response;
+  }
+
+  if (!options.stripMetadata && !options.stripOutput) {
+    return response;
+  }
+
+  const projectedResponse = options.stripMetadata
+    ? (({ metadata: _metadata, ...rest }) => rest)(response)
+    : { ...response };
+
+  if (options.stripOutput) {
+    projectedResponse.output = '[output stripped]';
+  }
+
+  return projectedResponse;
+}
+
 function projectTestCase(
   testCase: AtomicTestCase,
   options: { stripMetadata: boolean; stripVars: boolean },
@@ -608,13 +631,10 @@ export default class EvalResult {
     const shouldStripGradingResult = getEnvBool('PROMPTFOO_STRIP_GRADING_RESULT', false);
     const shouldStripMetadata = getEnvBool('PROMPTFOO_STRIP_METADATA', false);
 
-    const response =
-      shouldStripResponseOutput && this.response
-        ? {
-            ...this.response,
-            output: '[output stripped]',
-          }
-        : this.response;
+    const response = projectProviderResponse(this.response, {
+      stripMetadata: shouldStripMetadata,
+      stripOutput: shouldStripResponseOutput,
+    });
 
     const prompt = shouldStripPromptText
       ? {

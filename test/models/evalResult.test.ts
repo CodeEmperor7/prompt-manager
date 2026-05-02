@@ -843,6 +843,83 @@ describe('EvalResult', () => {
       );
     });
 
+    it('should preserve the original response object when response stripping is disabled', () => {
+      const response = {
+        output: 'provider output',
+        metadata: {
+          transformedRequest: {
+            headers: {
+              Authorization: 'Bearer nested-secret',
+            },
+          },
+        },
+      };
+
+      const result = new EvalResult({
+        id: 'test-id',
+        evalId: 'test-eval-id',
+        promptIdx: 0,
+        testIdx: 0,
+        testCase: mockTestCase,
+        prompt: mockPrompt,
+        success: true,
+        score: 1,
+        response,
+        gradingResult: null,
+        provider: mockProvider,
+        failureReason: ResultFailureReason.NONE,
+        namedScores: {},
+      });
+
+      expect(result.toEvaluateResult().response).toBe(response);
+    });
+
+    it('should strip nested provider response metadata when metadata stripping is enabled', () => {
+      const restoreEnv = mockProcessEnv({ PROMPTFOO_STRIP_METADATA: 'true' });
+
+      try {
+        const result = new EvalResult({
+          id: 'test-id',
+          evalId: 'test-eval-id',
+          promptIdx: 0,
+          testIdx: 0,
+          testCase: mockTestCase,
+          prompt: mockPrompt,
+          success: true,
+          score: 1,
+          response: {
+            output: 'provider output',
+            latencyMs: 42,
+            metadata: {
+              transformedRequest: {
+                headers: {
+                  Authorization: 'Bearer nested-secret',
+                },
+              },
+            },
+          },
+          gradingResult: null,
+          provider: mockProvider,
+          failureReason: ResultFailureReason.NONE,
+          namedScores: {},
+          metadata: {
+            debug: 'top-level-secret',
+          },
+        });
+
+        const evaluateResult = result.toEvaluateResult();
+
+        expect(evaluateResult.metadata).toEqual({});
+        expect(evaluateResult.response).toEqual({
+          output: 'provider output',
+          latencyMs: 42,
+        });
+        expect(JSON.stringify(evaluateResult)).not.toContain('nested-secret');
+      } finally {
+        restoreEnv();
+      }
+    });
+
     it('should strip nested test-case metadata when metadata stripping is enabled', () => {
       const restoreEnv = mockProcessEnv({
         PROMPTFOO_STRIP_METADATA: 'true',

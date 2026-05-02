@@ -185,6 +185,66 @@ describe('writeOutput', () => {
       extension: 'yaml',
       parse: (value: string) => yaml.load(value) as Record<string, any>,
     },
+  ])('omits nested response metadata from $extension output when metadata stripping is enabled', async ({
+    extension,
+    parse,
+  }) => {
+    const restoreEnv = mockProcessEnv({ PROMPTFOO_STRIP_METADATA: 'true' });
+    try {
+      const eval_ = new Eval({});
+      await eval_.addResult({
+        success: true,
+        failureReason: ResultFailureReason.NONE,
+        score: 1,
+        namedScores: {},
+        latencyMs: 100,
+        provider: { id: 'provider' },
+        prompt: {
+          raw: 'Test prompt',
+          label: 'Test prompt',
+        },
+        response: {
+          output: 'Test output',
+          metadata: {
+            transformedRequest: {
+              headers: {
+                Authorization: 'Bearer nested-secret',
+              },
+            },
+          },
+        },
+        vars: {},
+        promptIdx: 0,
+        testIdx: 0,
+        testCase: {},
+        promptId: 'prompt',
+        metadata: {
+          debug: 'top-level-secret',
+        },
+      });
+
+      await writeOutput(`output.${extension}`, eval_, null);
+
+      const written = vi.mocked(fsPromises.writeFile).mock.calls[0][1] as string;
+      const parsed = parse(written);
+      const result = parsed.results.results[0];
+      expect(result.metadata).toEqual({});
+      expect(result.response.metadata).toBeUndefined();
+      expect(written).not.toContain('nested-secret');
+    } finally {
+      restoreEnv();
+    }
+  });
+
+  it.each([
+    {
+      extension: 'json',
+      parse: (value: string) => JSON.parse(value),
+    },
+    {
+      extension: 'yaml',
+      parse: (value: string) => yaml.load(value) as Record<string, any>,
+    },
   ])('omits test-case metadata from $extension output when metadata stripping is enabled', async ({
     extension,
     parse,
