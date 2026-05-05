@@ -28,12 +28,7 @@ import { generateTable } from '../table';
 import telemetry from '../telemetry';
 import { EMAIL_OK_STATUS } from '../types/email';
 import { isCliEventSource } from '../types/eventSource';
-import {
-  CommandLineOptionsSchema,
-  MAX_SUGGESTIONS_COUNT,
-  OutputFileExtension,
-  TestSuiteSchema,
-} from '../types/index';
+import { CommandLineOptionsSchema, MAX_SUGGESTIONS_COUNT, TestSuiteSchema } from '../types/index';
 import { isApiProvider } from '../types/providers';
 import { checkCloudPermissions, getEvalConfigFromCloud, getOrgContext } from '../util/cloud';
 import { clearConfigCache, loadDefaultConfig } from '../util/config/default';
@@ -46,6 +41,7 @@ import {
 import { maybeLoadFromExternalFile } from '../util/file';
 import { printBorder, setupEnv, writeMultipleOutputs } from '../util/index';
 import invariant from '../util/invariant';
+import { getOutputFileFormat, SUPPORTED_OUTPUT_FILE_FORMATS } from '../util/outputFormats';
 import { promptfooCommand } from '../util/promptfooCommand';
 import { checkProviderApiKeys } from '../util/provider';
 import { shouldShareResults } from '../util/sharing';
@@ -1195,7 +1191,7 @@ export function evalCommand(
     // Output configuration
     .option(
       '-o, --output <paths...>',
-      'Path to output file (csv, txt, json, yaml, yml, html), default is no output file',
+      `Path to output file (${SUPPORTED_OUTPUT_FILE_FORMATS.join(', ')}), default is no output file`,
     )
     .option('--table', 'Output table in CLI', defaultConfig?.commandLineOptions?.table ?? true)
     .option('--no-table', 'Do not output table in CLI', defaultConfig?.commandLineOptions?.table)
@@ -1278,12 +1274,10 @@ export function evalCommand(
       }
 
       for (const maybeFilePath of validatedOpts.output ?? []) {
-        const { data: extension } = OutputFileExtension.safeParse(
-          maybeFilePath.split('.').pop()?.toLowerCase(),
-        );
+        const extension = getOutputFileFormat(maybeFilePath);
         invariant(
           extension,
-          `Unsupported output file format: ${maybeFilePath}. Please use one of: ${OutputFileExtension.options.join(', ')}.`,
+          `Unsupported output file format: ${maybeFilePath}. Please use one of: ${SUPPORTED_OUTPUT_FILE_FORMATS.join(', ')}.`,
         );
       }
       await doEval(
