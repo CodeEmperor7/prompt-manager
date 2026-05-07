@@ -159,6 +159,50 @@ describe('TargetTypeSelection', () => {
     expect(screen.getByRole('button', { name: /^Next$/i })).toBeDisabled();
   });
 
+  it('should not derive a selected provider type from the default incomplete target', () => {
+    const mockSetProviderType = vi.fn();
+    mockUseRedTeamConfig.mockReturnValue({
+      config: {
+        target: {
+          id: 'http',
+          label: '',
+          config: {},
+        },
+      },
+      updateConfig: mockUpdateConfig,
+      providerType: undefined,
+      setProviderType: mockSetProviderType,
+    });
+
+    renderComponent();
+
+    expect(screen.getByText('Select Target Type')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Next$/i })).toBeDisabled();
+    expect(mockSetProviderType).not.toHaveBeenCalled();
+  });
+
+  it('should clear a stale persisted provider type for an incomplete target', () => {
+    const mockSetProviderType = vi.fn();
+    mockUseRedTeamConfig.mockReturnValue({
+      config: {
+        target: {
+          id: 'http',
+          label: '',
+          config: {},
+        },
+      },
+      updateConfig: mockUpdateConfig,
+      providerType: 'http',
+      setProviderType: mockSetProviderType,
+    });
+
+    renderComponent();
+
+    expect(screen.getByText('Select Target Type')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Next$/i })).toBeDisabled();
+    expect(mockSetProviderType).toHaveBeenCalledWith(undefined);
+  });
+
   it('stacks the quick-start prompt before the layout has room for a side-by-side treatment', () => {
     renderComponent();
 
