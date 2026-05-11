@@ -2288,6 +2288,17 @@ export class OpenAICodexAppServerProvider implements ApiProvider {
     }
 
     const completedItem = this.withCommandExecutionOutput(state, item);
+    if (
+      completedItem?.type === 'commandExecution' &&
+      typeof completedItem.id === 'string' &&
+      typeof completedItem.aggregatedOutput === 'string' &&
+      !state.commandExecutionOutputDeltasByItemId.has(completedItem.id)
+    ) {
+      state.commandExecutionOutputDeltasByItemId.set(
+        completedItem.id,
+        completedItem.aggregatedOutput,
+      );
+    }
     state.items.push(completedItem);
     const itemId = completedItem.id ? String(completedItem.id) : crypto.randomUUID();
     const span =
@@ -2323,7 +2334,11 @@ export class OpenAICodexAppServerProvider implements ApiProvider {
     const completedItem = state.items.find(
       (item) => item?.type === 'commandExecution' && String(item.id) === params.itemId,
     );
-    if (completedItem && typeof completedItem.aggregatedOutput !== 'string') {
+    if (
+      completedItem &&
+      (typeof completedItem.aggregatedOutput !== 'string' ||
+        completedItem.aggregatedOutput === existing)
+    ) {
       completedItem.aggregatedOutput = aggregatedOutput;
     }
   }
