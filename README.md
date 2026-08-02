@@ -13,7 +13,7 @@
 
 <p align="center">
 
-A centralized platform for creating, organizing, testing, versioning, and deploying prompts for Large Language Model (LLM) applications.
+A centralized platform for creating, organizing, testing, versioning and deploying prompts for Large Language Model (LLM) applications.
 
 </p>
 
