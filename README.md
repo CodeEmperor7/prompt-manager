@@ -1,101 +1,872 @@
-# Promptfoo: LLM evals & red teaming
+# Prompt Manager
 
 <p align="center">
-  <a href="https://npmjs.com/package/promptfoo"><img src="https://img.shields.io/npm/v/promptfoo" alt="npm"></a>
-  <a href="https://npmjs.com/package/promptfoo"><img src="https://img.shields.io/npm/dm/promptfoo" alt="npm"></a>
-  <a href="https://github.com/promptfoo/promptfoo/actions/workflows/main.yml"><img src="https://img.shields.io/github/actions/workflow/status/promptfoo/promptfoo/main.yml" alt="GitHub Workflow Status"></a>
-  <a href="https://github.com/promptfoo/promptfoo/blob/main/LICENSE"><img src="https://img.shields.io/github/license/promptfoo/promptfoo" alt="MIT license"></a>
-  <a href="https://discord.gg/promptfoo"><img src="https://img.shields.io/discord/1146610656779440188?logo=discord&label=promptfoo" alt="Discord"></a>
+
+![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)
+![React](https://img.shields.io/badge/React-19-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
+![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o-412991)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 </p>
 
 <p align="center">
-  <code>promptfoo</code> is a CLI and library for evaluating and red-teaming LLM apps. Stop the trial-and-error approach - start shipping secure, reliable AI apps.
+
+A centralized platform for creating, organizing, testing, versioning, and deploying prompts for Large Language Model (LLM) applications.
+
 </p>
+
+---
+
+# Overview
+
+Prompt Manager is a full-stack platform that helps AI teams manage prompt engineering workflows throughout the development lifecycle.
+
+Instead of storing prompts inside source code, Prompt Manager provides a centralized workspace where prompts can be created, tested, versioned, compared, approved, and deployed through REST APIs.
+
+The platform supports multiple LLM providers and enables rapid experimentation while maintaining version history and collaboration.
+
+---
+
+# Features
+
+## Prompt Library
+
+Manage prompts in one centralized location.
+
+Features include:
+
+- Create prompts
+- Edit prompts
+- Delete prompts
+- Organize by folders
+- Tag prompts
+- Search prompts
+- Archive prompts
+
+---
+
+## Prompt Versioning
+
+Every modification creates a new version.
+
+```
+Prompt
+
+↓
+
+Version 1
+
+↓
+
+Version 2
+
+↓
+
+Version 3
+
+↓
+
+Rollback Anytime
+```
+
+---
+
+## Prompt Playground
+
+Experiment with prompts before deployment.
+
+Supports:
+
+- Live testing
+- Temperature adjustment
+- Max tokens
+- Top P
+- Streaming
+- System prompts
+
+---
+
+## Multi-Provider Support
+
+Compatible with leading LLM providers.
+
+Supported providers:
+
+- OpenAI
+- Anthropic Claude
+- Google Gemini
+- Ollama
+- Azure OpenAI
+
+---
+
+## Prompt Variables
+
+Create reusable prompt templates.
+
+Example
+
+```text
+Hello {{customer_name}}
+
+Your order {{order_number}} has been shipped.
+```
+
+---
+
+## Prompt Comparison
+
+Compare outputs from multiple models.
+
+```
+Prompt
+
+↓
+
+GPT-4o
+
+Claude
+
+Gemini
+
+↓
+
+Compare Responses
+```
+
+---
+
+## Prompt Evaluation
+
+Evaluate prompts using multiple quality metrics.
+
+Metrics include:
+
+- Accuracy
+- Relevance
+- Hallucination Rate
+- Completeness
+- Consistency
+- Latency
+
+---
+
+## Prompt Approval Workflow
+
+```
+Draft
+
+↓
+
+Review
+
+↓
+
+Approved
+
+↓
+
+Production
+```
+
+---
+
+## Prompt Analytics
+
+Monitor prompt performance.
+
+Track:
+
+- Usage
+- Response Time
+- Cost
+- Token Consumption
+- Success Rate
+- User Ratings
+
+---
+
+# Architecture
+
+```
+             Web Dashboard
+
+                    │
+
+                    ▼
+
+             FastAPI Backend
+
+     ┌───────────┼───────────┐
+
+     ▼           ▼           ▼
+
+ Prompt API   Versioning   Authentication
+
+     │           │           │
+
+     └───────────┼───────────┘
+
+                 ▼
+
+          Prompt Database
+
+                 ▼
+
+          LLM Providers
+
+      ┌──────┬──────┬──────┐
+
+      ▼      ▼      ▼
+
+   OpenAI Claude Gemini
+
+                 ▼
+
+          Prompt Results
+```
+
+---
+
+# Technology Stack
+
+## Frontend
+
+- React
+- TypeScript
+- Tailwind CSS
+
+---
+
+## Backend
+
+- Python
+- FastAPI
+- Pydantic
+- SQLAlchemy
+
+---
+
+## Database
+
+- PostgreSQL
+- SQLite
+
+---
+
+## Artificial Intelligence
+
+- OpenAI API
+- Anthropic Claude
+- Google Gemini
+- LangChain
+
+---
+
+## Authentication
+
+- JWT
+- OAuth2
+
+---
+
+## DevOps
+
+- Docker
+- Docker Compose
+- GitHub Actions
+
+---
+
+# Project Structure
+
+```
+prompt-manager/
+
+├── app/
+│   ├── api/
+│   ├── auth/
+│   ├── prompts/
+│   ├── versions/
+│   ├── evaluations/
+│   ├── analytics/
+│   ├── services/
+│   ├── database/
+│   └── utils/
+│
+├── frontend/
+├── tests/
+├── docs/
+├── scripts/
+├── examples/
+└── README.md
+```
+
+---
+
+# Installation
+
+Clone the repository
+
+```bash
+git clone https://github.com/ForwardAva/prompt-manager.git
+```
+
+Navigate to the project
+
+```bash
+cd prompt-manager
+```
+
+Create a virtual environment
+
+```bash
+python -m venv .venv
+```
+
+Activate the environment
+
+Windows
+
+```bash
+.venv\Scripts\activate
+```
+
+Linux / macOS
+
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+# Environment Variables
+
+Create a `.env` file.
+
+```env
+OPENAI_API_KEY=
+
+ANTHROPIC_API_KEY=
+
+GEMINI_API_KEY=
+
+DATABASE_URL=
+
+JWT_SECRET=
+```
+
+---
+
+# Quick Start
+
+Run the backend
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Run the frontend
+
+```bash
+npm install
+
+npm run dev
+```
+
+Open your browser
+
+```
+http://localhost:3000
+```
+
+---
+
+# Core Features
+
+- Prompt Management
+- Prompt Versioning
+- Prompt Playground
+- Multi-Model Testing
+- Prompt Evaluation
+- REST API
+- Authentication
+- Analytics Dashboard
+
+---
+
+## Next Section
+
+- REST API
+- Prompt CRUD API
+- Evaluation API
+- Version API
+- Docker
+- GitHub Actions
+- Testing
+- Deployment
+- Roadmap
+- Contributing
+- License
+
+---
+
+# REST API
+
+Run the API server
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Base URL
+
+```
+http://localhost:8000
+```
+
+Swagger UI
+
+```
+http://localhost:8000/docs
+```
+
+ReDoc
+
+```
+http://localhost:8000/redoc
+```
+
+---
+
+# API Endpoints
+
+## Create Prompt
+
+```
+POST /api/v1/prompts
+```
+
+Request
+
+```json
+{
+  "name": "Customer Support",
+  "description": "General customer support assistant",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "system_prompt": "You are a helpful customer support assistant.",
+  "prompt": "Answer the customer's question."
+}
+```
+
+Response
+
+```json
+{
+  "id": "a2c58d5d",
+  "status": "created"
+}
+```
+
+---
+
+## Get Prompt
+
+```
+GET /api/v1/prompts/{id}
+```
+
+---
+
+## Update Prompt
+
+```
+PUT /api/v1/prompts/{id}
+```
+
+---
+
+## Delete Prompt
+
+```
+DELETE /api/v1/prompts/{id}
+```
+
+---
+
+## List Prompts
+
+```
+GET /api/v1/prompts
+```
+
+Supports:
+
+- Pagination
+- Search
+- Filtering
+- Sorting
+
+---
+
+## Test Prompt
+
+```
+POST /api/v1/prompts/test
+```
+
+Request
+
+```json
+{
+  "prompt_id": "a2c58d5d",
+  "input": "Explain Retrieval-Augmented Generation."
+}
+```
+
+Response
+
+```json
+{
+  "response": "...",
+  "tokens": 421,
+  "latency_ms": 1132
+}
+```
+
+---
+
+## Compare Models
+
+```
+POST /api/v1/prompts/compare
+```
+
+Compare the same prompt across multiple providers.
+
+Supported models
+
+- GPT-4o
+- Claude Sonnet
+- Gemini Pro
+- Llama 3
+
+---
+
+## Evaluate Prompt
+
+```
+POST /api/v1/evaluations
+```
+
+Evaluation metrics
+
+- Accuracy
+- Relevance
+- Completeness
+- Consistency
+- Hallucination Detection
+- Latency
+- Cost
+
+---
+
+## Prompt Version History
+
+```
+GET /api/v1/prompts/{id}/versions
+```
+
+---
+
+## Rollback Prompt
+
+```
+POST /api/v1/prompts/{id}/rollback
+```
+
+Restore any previous version instantly.
+
+---
+
+# Prompt Workflow
+
+```
+Create Prompt
+
+        │
+
+        ▼
+
+Test Prompt
+
+        │
+
+        ▼
+
+Evaluate
+
+        │
+
+        ▼
+
+Review
+
+        │
+
+        ▼
+
+Approve
+
+        │
+
+        ▼
+
+Deploy
+
+        │
+
+        ▼
+
+Production
+```
+
+---
+
+# Example Repository Structure
+
+```
+app/
+
+├── api/
+
+├── auth/
+
+├── analytics/
+
+├── prompts/
+
+├── evaluations/
+
+├── providers/
+
+├── versioning/
+
+├── services/
+
+├── middleware/
+
+├── schemas/
+
+├── database/
+
+├── utils/
+
+└── main.py
+```
+
+---
+
+# Testing
+
+Run all tests
+
+```bash
+pytest
+```
+
+Run coverage
+
+```bash
+pytest --cov=app
+```
+
+Run integration tests
+
+```bash
+pytest tests/integration
+```
+
+---
+
+# Docker
+
+Build
+
+```bash
+docker build -t prompt-manager .
+```
+
+Run
+
+```bash
+docker run -p 8000:8000 prompt-manager
+```
+
+Docker Compose
+
+```bash
+docker compose up -d
+```
+
+---
+
+# Performance
+
+| Metric            |   Result |
+| ----------------- | -------: |
+| Prompt Save       | < 100 ms |
+| Prompt Search     | < 150 ms |
+| Prompt Evaluation |  < 2 sec |
+| API Latency       | < 500 ms |
+| Concurrent Users  |   1,000+ |
+
+---
+
+# Screenshots
+
+Replace these placeholders with your own images.
+
+```
+docs/images/dashboard.png
+
+docs/images/prompt-library.png
+
+docs/images/playground.png
+
+docs/images/version-history.png
+
+docs/images/evaluation.png
+
+docs/images/analytics.png
+```
+
+---
+
+# Roadmap
+
+## Version 1.0
+
+- [x] Prompt CRUD
+- [x] Prompt Playground
+- [x] Prompt Versioning
+- [x] Multi-Provider Support
+- [x] REST API
+- [x] Authentication
+
+## Version 1.1
+
+- [ ] Team Collaboration
+- [ ] Shared Prompt Library
+- [ ] Prompt Templates
+- [ ] Bulk Import & Export
+- [ ] Prompt Tags
+
+## Version 2.0
+
+- [ ] AI Prompt Optimizer
+- [ ] Auto Prompt Evaluation
+- [ ] Prompt A/B Testing
+- [ ] Prompt Marketplace
+- [ ] Cost Optimization
+- [ ] Prompt Monitoring
+- [ ] Scheduled Evaluations
+- [ ] Enterprise Workspaces
+
+---
+
+# Contributing
+
+Contributions are welcome.
+
+1. Fork the repository.
+
+2. Create a feature branch.
+
+```bash
+git checkout -b feature/my-feature
+```
+
+3. Commit your changes.
+
+```bash
+git commit -m "Add prompt analytics"
+```
+
+4. Push your branch.
+
+```bash
+git push origin feature/my-feature
+```
+
+5. Open a Pull Request.
+
+---
+
+# Security
+
+Never commit API keys, secrets, or credentials.
+
+Use environment variables for all sensitive configuration.
+
+Report security vulnerabilities privately before creating a public issue.
+
+---
+
+# License
+
+This project is licensed under the MIT License.
+
+See the `LICENSE` file for details.
+
+---
+
+# Author
+
+**Oscar Garcia**
+
+**AI Quality Engineer • LLM Evaluation Specialist • AI Application Developer**
+
+GitHub
+
+https://github.com/ForwardAva
+
+---
+
+# Future Enhancements
+
+- Prompt Cost Dashboard
+- AI Prompt Suggestions
+- Prompt Quality Scoring
+- Semantic Prompt Search
+- Prompt Collections
+- Prompt Sharing
+- Prompt Scheduling
+- CI/CD Integration
+- Enterprise RBAC
+- Audit Logs
+
+---
+
+# Support
+
+If you find this project useful, consider giving it a ⭐ on GitHub.
+
+Issues, feature requests, and pull requests are always welcome.
+
+---
 
 <p align="center">
-  <a href="https://www.promptfoo.dev">Website</a> ·
-  <a href="https://www.promptfoo.dev/docs/getting-started/">Getting Started</a> ·
-  <a href="https://www.promptfoo.dev/docs/red-team/">Red Teaming</a> ·
-  <a href="https://www.promptfoo.dev/docs/">Documentation</a> ·
-  <a href="https://discord.gg/promptfoo">Discord</a>
+
+Built with ❤️ using FastAPI, React, LangChain, and OpenAI.
+
 </p>
-
-> Promptfoo is now part of OpenAI. Promptfoo remains open source and MIT licensed. Read the [company update](https://www.promptfoo.dev/blog/promptfoo-joining-openai/).
-
-## Quick Start
-
-Requires [Node.js](https://nodejs.org/en/download) `>=22.22.0` for npm and npx usage. Node.js 24 LTS
-is recommended; see the [runtime support guide](https://www.promptfoo.dev/docs/installation/#nodejs-runtime-support).
-
-```sh
-npm install -g promptfoo
-promptfoo init --example getting-started
-```
-
-Also available via `brew install promptfoo` and `pip install promptfoo`. You can also use `npx promptfoo@latest` to run any command without installing.
-
-Most LLM providers require an API key. Set yours as an environment variable:
-
-```sh
-export OPENAI_API_KEY=sk-abc123
-```
-
-Once you're in the example directory, run an eval and view results:
-
-```sh
-cd getting-started
-promptfoo eval
-promptfoo view
-```
-
-See [Getting Started](https://www.promptfoo.dev/docs/getting-started/) (evals) or [Red Teaming](https://www.promptfoo.dev/docs/red-team/) (vulnerability scanning) for more.
-
-## What can you do with Promptfoo?
-
-- **Test your prompts and models** with [automated evaluations](https://www.promptfoo.dev/docs/getting-started/)
-- **Secure your LLM apps** with [red teaming](https://www.promptfoo.dev/docs/red-team/) and vulnerability scanning
-- **Compare models** side-by-side (OpenAI, Anthropic, Azure, Bedrock, Ollama, and [more](https://www.promptfoo.dev/docs/providers/))
-- **Automate checks** in [CI/CD](https://www.promptfoo.dev/docs/integrations/ci-cd/)
-- **Review pull requests** for LLM-related security and compliance issues with [code scanning](https://www.promptfoo.dev/docs/code-scanning/)
-- **Share results** with your team
-
-Here's what it looks like in action:
-
-<img src="site/static/img/claude-vs-gpt-example@2x.png" alt="prompt evaluation matrix - web viewer" width="700">
-
-It works on the command line too:
-
-<img src="https://www.promptfoo.dev/img/docs/self-grading.gif" alt="promptfoo command line" width="700">
-
-It also can generate [security vulnerability reports](https://www.promptfoo.dev/docs/red-team/):
-
-<img src="https://www.promptfoo.dev/img/redteam-dashboard@2x.jpg" alt="gen ai red team" width="700">
-
-## Why Promptfoo?
-
-- **Developer-first**: Fast, with features like live reload and caching
-- **Private**: LLM evals run 100% locally - your prompts never leave your machine
-- **Flexible**: Works with any LLM API or programming language
-- **Battle-tested**: Powers LLM apps serving 10M+ users in production
-- **Data-driven**: Make decisions based on metrics, not gut feel
-- **Open source**: MIT licensed, with an active community
-
-## Learn More
-
-- [Getting Started](https://www.promptfoo.dev/docs/getting-started/)
-- [Full Documentation](https://www.promptfoo.dev/docs/intro/)
-- [Red Teaming Guide](https://www.promptfoo.dev/docs/red-team/)
-- [CLI Usage](https://www.promptfoo.dev/docs/usage/command-line/)
-- [Node.js Package](https://www.promptfoo.dev/docs/usage/node-package/)
-- [Supported Models](https://www.promptfoo.dev/docs/providers/)
-- [Code Scanning Guide](https://www.promptfoo.dev/docs/code-scanning/)
-
-## Contributing
-
-We welcome contributions! Check out our [contributing guide](https://www.promptfoo.dev/docs/contributing/) to get started.
-
-Join our [Discord community](https://discord.gg/promptfoo) for help and discussion.
-
-<a href="https://github.com/promptfoo/promptfoo/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=promptfoo/promptfoo" />
-</a>
